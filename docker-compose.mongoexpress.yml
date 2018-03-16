@@ -1,0 +1,23 @@
+version: '3.2'
+services:
+  mongoexpress:
+    image: danghung/mongo-express
+    container_name: mongo-express
+    networks:
+     - nginx
+    expose:
+     - "8081"
+    external_links:
+     - mongodb:mongo
+    environment:
+     - LETSENCRYPT_EMAIL=muaiphone123@gmail.com
+     - LETSENCRYPT_HOST=mongo.danghung.top
+     - VIRTUAL_HOST=mongo.danghung.top
+     - VIRTUAL_PORT=8081
+     - ME_CONFIG_OPTIONS_EDITORTHEME=ambiance
+     - ME_CONFIG_BASICAUTH_PASSWORD=youmustchangeit
+     - ME_CONFIG_BASICAUTH_USERNAME=admin
+
+networks:
+  nginx:
+    external: true

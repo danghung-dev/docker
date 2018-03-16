@@ -1,5 +1,5 @@
-
 version: '3.2'
+# run nginx, let's encrypt, jenkins, mongodb
 services:
   nginx-proxy:
     image: jwilder/nginx-proxy
@@ -53,35 +53,15 @@ services:
     container_name: mongodb
     #ports:
      #- "27017:27017"
+    expose:
+     - "27017"
     networks:
      - nginx
     volumes:
      - /home/hung/mongodb/data/db:/data/db
      - /home/hung/mongodb/log:/var/log/mongodb
 
-  mongoexpress:
-    image: danghung/mongo-express
-    restart: always
-    container_name: mongodb-express
-    networks:
-     - nginx
-    expose:
-     - "8081"
-    links:
-     - mongodb
-    environment:
-     - LETSENCRYPT_EMAIL=muaiphone123@gmail.com
-     - LETSENCRYPT_HOST=mongo.danghung.top
-     - VIRTUAL_HOST=mongo.danghung.top
-     - VIRTUAL_PORT=8081
-     - ME_CONFIG_OPTIONS_EDITORTHEME=ambiance
-     - ME_CONFIG_BASICAUTH_PASSWORD=passwordthatdai
-     - ME_CONFIG_BASICAUTH_USERNAME=admin
-    depends_on:
-     - mongodb
-     - nginx-proxy
-     - letsencrypt-nginx-proxy-companion
-    command: ["/wait-for-it.sh", "mongodb:27017"]
+
 volumes:
   vhost:
   html:
