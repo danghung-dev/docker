@@ -1,0 +1,90 @@
+
+version: '3.2'
+services:
+  nginx-proxy:
+    image: jwilder/nginx-proxy
+    container_name:  nginx-proxy
+    ports:
+     - "80:80"
+     - "443:443"
+    networks:
+     - nginx
+    volumes:
+      - /home/hung/docker/nginx/certs:/etc/nginx/certs:ro
+      - vhost:/etc/nginx/vhost.d
+      - html:/usr/share/nginx/html
+      - /var/run/docker.sock:/tmp/docker.sock:ro
+    labels:
+      - com.github.jrcs.letsencrypt_nginx_proxy_companion.nginx_proxy
+
+  letsencrypt-nginx-proxy-companion:
+    image: jrcs/letsencrypt-nginx-proxy-companion
+    container_name: letsencrypt
+    networks:
+     - nginx
+    volumes:
+     - /home/hung/docker/nginx/certs:/etc/nginx/certs:rw
+     - /var/run/docker.sock:/var/run/docker.sock:ro
+     - vhost:/etc/nginx/vhost.d
+     - html:/usr/share/nginx/html
+    depends_on:
+     - nginx-proxy
+
+  jenkins:
+    image: jenkins
+    container_name: jenkins
+    networks:
+     - nginx
+    volumes:
+     - /home/hung/docker/jenkins/jenkins_home:/var/jenkins_home
+     - /var/run/docker.sock:/var/run/docker.sock
+    environment:
+     - LETSENCRYPT_EMAIL=muaiphone123@gmail.com
+     - LETSENCRYPT_HOST=jenkins.danghung.top
+     - VIRTUAL_HOST=jenkins.danghung.top
+     - VIRTUAL_PORT=8080
+    expose:
+     - "8080"
+    depends_on:
+     - nginx-proxy
+     - letsencrypt-nginx-proxy-companion
+  mongodb:
+    image: mongo
+    container_name: mongodb
+    #ports:
+     #- "27017:27017"
+    networks:
+     - nginx
+    volumes:
+     - /home/hung/mongodb/data/db:/data/db
+     - /home/hung/mongodb/log:/var/log/mongodb
+
+  mongoexpress:
+    image: danghung/mongo-express
+    restart: always
+    container_name: mongodb-express
+    networks:
+     - nginx
+    expose:
+     - "8081"
+    links:
+     - mongodb
+    environment:
+     - LETSENCRYPT_EMAIL=muaiphone123@gmail.com
+     - LETSENCRYPT_HOST=mongo.danghung.top
+     - VIRTUAL_HOST=mongo.danghung.top
+     - VIRTUAL_PORT=8081
+     - ME_CONFIG_OPTIONS_EDITORTHEME=ambiance
+     - ME_CONFIG_BASICAUTH_PASSWORD=passwordthatdai
+     - ME_CONFIG_BASICAUTH_USERNAME=admin
+    depends_on:
+     - mongodb
+     - nginx-proxy
+     - letsencrypt-nginx-proxy-companion
+    command: ["/wait-for-it.sh", "mongodb:27017"]
+volumes:
+  vhost:
+  html:
+networks:
+  nginx:
+    external: true
