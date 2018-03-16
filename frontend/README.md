@@ -1,3 +1,17 @@
+# Build frontend project
+1. Install yarn
+curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | sudo apt-key add -
+echo "deb https://dl.yarnpkg.com/debian/ stable main" | sudo tee /etc/apt/sources.list.d/yarn.list
+sudo apt-get update && sudo apt-get install yarn
+
+2. git clone frontend project
+
+3. copy .env, add environment REACT_APP_BASE_API=https://manga.server.danghung.top/api/v1
+
+4. yarn install && yarn build
+
+5. copy uploads (images folder) to build/ folder
+
 # Config Https for frontend
 1. Run nginx docker with volume frontend, conf.d
 ```

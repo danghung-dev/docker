@@ -60,11 +60,16 @@ RUN  apt-get install -y docker-ce
 
 Then build  ``` docker build -t jenkins .  ```
 
-#### 1. First run nginx, let's encrypt, jenkins, mongodb
+#### 1. Create network
+```
+docker network create nginx
+```
+
+#### 2. First run nginx, let's encrypt, jenkins, mongodb
 ```
 docker-compose up -d
 ```
-#### Second run mongo express
+#### 3. Run mongo express
 ```
 docker-compose -f docker-compose.mongoexpress.yml up -d
 ```

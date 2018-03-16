@@ -10,6 +10,8 @@ services:
     networks:
      - nginx
     volumes:
+      - /home/hung/docker/nginx/conf.d:/etc/nginx/conf.d
+      - /home/hung/docker/nginx/frontend:/var/www
       - /home/hung/docker/nginx/certs:/etc/nginx/certs:ro
       - vhost:/etc/nginx/vhost.d
       - html:/usr/share/nginx/html
