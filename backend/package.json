@@ -1,0 +1,35 @@
+{
+  "name": "web_manga",
+  "version": "1.0.0",
+  "description": "Web Manga",
+  "main": "index.js",
+  "private": false,
+  "engines": {
+    "node": ">=4.8.0",
+    "npm": ">=2.15.11",
+    "yarn": ">=0.20.3"
+  },
+  "scripts": {
+    "dev": "DEBUG=web_manga:* babel-node index.js --presets es2015,stage-2",
+    "start": "gulp serve",
+    "start:debug": "cross-env DEBUG=web_manga:* yarn start",
+    "build": "gulp",
+    "package": "pkg -t node8-alpine-x64 --output ./pkg/linux ./dist/index.js"
+  },
+
+  "dependencies": {
+    "babel-runtime": "^6.26.0"
+  },
+  "devDependencies": {
+    
+  },
+  "babel": {
+    "presets": [
+      "es2015",
+      "stage-2"
+    ],
+    "plugins": [
+      "add-module-exports"
+    ]
+  }
+}
