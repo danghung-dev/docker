@@ -9,6 +9,44 @@ I just copy to build folder to /usr/share/nginx/html folder. Nginx will do rest 
 4.  Push to registry
 5.  docker run -d -e "VIRTUAL_HOST=mymanga.com" -v /Users/danghung/projects/manga/client/uploads:/usr/share/nginx/html/uploads mangaclient
 
+You can add -v to log folder to get log easier. winston, morgan is good log management.
+
+### Gzip all frontend code
+Smart generation of Gzip files for nginx
+
+Gzip script file
+```
+#! /bin/bash
+
+FILETYPES=( "*.html" "*.css" "*.js" "*.xml" )
+DIRECTORIES="/var/www/"
+MIN_SIZE=1024
+
+for currentdir in $DIRECTORIES
+do
+   for i in "${FILETYPES[@]}"
+   do
+      find $currentdir -iname "$i" -exec bash -c 'PLAINFILE={};GZIPPEDFILE={}.gz; \
+         if [ -e $GZIPPEDFILE ]; \
+         then if [ `stat --printf=%Y $PLAINFILE` -gt `stat --printf=%Y $GZIPPEDFILE` ]; \
+                then    gzip -1 -f -c $PLAINFILE > $GZIPPEDFILE; \
+                 fi; \
+         elif [ `stat --printf=%s $PLAINFILE` -gt $MIN_SIZE ]; \
+            then gzip -1 -c $PLAINFILE > $GZIPPEDFILE; \
+         fi' \;
+  done
+done
+```
+
+In nginx conf file
+```
+location ~* \.(html|css|js|xml)$
+{
+    gzip_static on;
+}
+```
+
+
 ### Build frontend project
 
 If you follow above, you don't need this.
